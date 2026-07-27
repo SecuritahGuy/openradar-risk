@@ -23,6 +23,15 @@ export default defineConfig({
           "/geoserver/GVP-VOTW/wfs"
         ),
       },
+      "/api/jma/typhoons": {
+        target: "https://www.jma.go.jp",
+        changeOrigin: true,
+        rewrite: (path) => {
+          const requested = new URL(path, "http://localhost");
+          const file = requested.searchParams.get("file");
+          return `/bosai/typhoon/data/${file}`;
+        },
+      },
     },
   },
   build: {

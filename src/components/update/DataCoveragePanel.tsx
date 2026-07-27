@@ -131,7 +131,7 @@ export function DataCoveragePanel({ items }: DataCoveragePanelProps) {
           )}
           {unavailableCount > 0 && (
             <span style={{ ...styles.summaryPill, color: "#8d6e63" }}>
-              {unavailableCount} unwired
+              {unavailableCount} unavailable
             </span>
           )}
           {loadingCount > 0 && (

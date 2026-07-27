@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  buildJmaDataUrl,
   fetchJmaCyclones,
   normalizeJmaCyclone,
   type JmaPastTrack,
@@ -23,6 +24,15 @@ const track: JmaPastTrack = {
 afterEach(() => vi.restoreAllMocks());
 
 describe("JMA tropical cyclones", () => {
+  it("uses the same-origin proxy in browsers and the official URL in Workers", () => {
+    expect(buildJmaDataUrl("targetTc.json", true)).toBe(
+      "/api/jma/typhoons?file=targetTc.json"
+    );
+    expect(buildJmaDataUrl("targetTc.json", false)).toBe(
+      "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json"
+    );
+  });
+
   it("normalizes the latest official [latitude, longitude] track point", () => {
     expect(normalizeJmaCyclone(target, track)).toMatchObject({
       source: "JMA",

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Production signal truthfulness
+
+- Aligned the dashboard's Current signals summary with the active Feed Explorer freshness rules so older seismic and NASA EONET records remain available as history without being described as current.
+- Routed browser JMA typhoon data through a five-minute cached Worker proxy while retaining direct official-source access for isolated background watch evaluations.
+- Replaced the ambiguous source-health term "unwired" with "unavailable" and added regressions for current-summary filtering and the bounded JMA proxy route.
+
 ### Water-observation reliability contracts
 
 - Added exact circular-radius filtering for USGS stream stations so bounding-box corner results cannot appear outside the selected area.

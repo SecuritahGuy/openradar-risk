@@ -10,6 +10,7 @@ const checks = [
   // Deliberately invalid inputs make these route checks fast and independent of upstream availability.
   { path: "/api/noaa/nwps?path=invalid", type: "application/json", status: 400 },
   { path: "/api/noaa/storm-events", type: "application/json", status: 400 },
+  { path: "/api/jma/typhoons?file=invalid", type: "application/json", status: 400 },
 ];
 
 let failed = false;

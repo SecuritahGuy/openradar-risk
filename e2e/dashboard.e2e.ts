@@ -148,6 +148,7 @@ async function blockExternalRequests(
       });
     } else if (options.newYorkTransportation && url.hostname === "511ny.org" && url.pathname === "/api/wzdx") {
       const description = "Bridge maintenance on US 9 northbound between Pine Street and Market Street - various lanes closed";
+      const relativeTime = (hours: number) => new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
       const occurrence = (id: string, start: string, end: string, related: Array<{ type: string; id: string }>) => ({
         id,
         type: "Feature",
@@ -159,7 +160,7 @@ async function blockExternalRequests(
             road_names: ["US 9"],
             direction: "unknown",
             description,
-            update_date: "2026-07-22T16:00:00Z",
+            update_date: relativeTime(-1),
             related_road_events: related,
           },
           road_event_id: id,
@@ -180,10 +181,10 @@ async function blockExternalRequests(
         body: JSON.stringify({
           type: "FeatureCollection",
           features: [
-            occurrence("work-1", "2026-07-22T13:00:00Z", "2026-07-22T23:30:00Z", [
+            occurrence("work-1", relativeTime(-1), relativeTime(6), [
               { type: "next-occurrence", id: "work-2" },
             ]),
-            occurrence("work-2", "2026-07-23T13:00:00Z", "2026-07-23T23:30:00Z", [
+            occurrence("work-2", relativeTime(24), relativeTime(30), [
               { type: "first-occurrence", id: "work-1" },
             ]),
           ],
