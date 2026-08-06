@@ -430,6 +430,14 @@ test("Smithsonian volcano records stay in historical baseline context", async ({
   const marker = page.locator(
     '.leaflet-interactive[aria-label*="historical volcano baseline"]'
   );
+  await expect(marker).toHaveCount(0);
+
+  const historicalMapContext = page.getByRole("checkbox", {
+    name: "Historical and older incident context",
+  });
+  await expect(historicalMapContext).not.toBeChecked();
+  await historicalMapContext.check();
+  await expect(historicalMapContext).toBeChecked();
   await expect(marker).toHaveCount(1);
   await marker.click({ force: true });
   await expect(page.getByText("Historical baseline · not an active alert")).toBeVisible();
