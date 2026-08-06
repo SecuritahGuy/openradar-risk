@@ -55,6 +55,7 @@ These sources are part of the current web codebase. "Main dashboard" indicates t
 | USGS Volcanoes | United States | Volcano alert levels (WATCH/ADVISORY/NORMAL) | Main dashboard and environmental signals |
 | UK Environment Agency | England | Active flood warnings | Main dashboard |
 | Smithsonian GVP | Global | Holocene volcano locations, geology, and eruption history | Nearby map and baseline context; excluded from current risk and notifications |
+| HOT / OpenStreetMap exposure | Global where mapped | Nearby hospitals, clinics, and schools | Key-free, incident-triggered detail and optional map context within a bounded 0.7-mile area; excluded from risk and notifications |
 
 ### Web priorities
 
@@ -118,6 +119,8 @@ The web application supports explicitly enabled Cloudflare background watches an
 | GlobalBuildingAtlas | Global | Building footprint counts, heights, density — for impact exposure analysis |
 | IBTrACS | Global historical tropical cyclones | Historical context, not live risk feed |
 | WMO CAP warning aggregation | Global by country | Valuable but source discovery and normalization are complex |
+
+HDX / HOT OpenStreetMap facility exposure is active as a contextual capability rather than a live hazard feed. It uses the key-free HOT Raw Data API only when an incident detail is opened, queries a provider-bounded 0.7-mile area, and never affects severity or notifications.
 
 BoM Australia warning feeds were revalidated in July 2026 and are not eligible for production promotion under the anonymous/API terms observed. Reconsider only after obtaining a registered-user publishing agreement from the Bureau.
 

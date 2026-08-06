@@ -5,11 +5,20 @@ import { assessImpact } from "../lib/impactInsights";
 import { concernContextLabel, eventSourceLabel } from "../lib/riskInsights";
 import { incidentMetadata } from "../lib/incidents";
 import { ModalDialog } from "./ModalDialog";
+import { ExposureContextPanel } from "./ExposureContextPanel";
+import type { HdxExposureResult } from "../services/hdx";
 
 interface EventDetailPanelProps {
   event: RiskEvent;
   location: ResolvedLocation | null;
   radius: RadiusOption;
+  exposure: HdxExposureResult | null;
+  exposureAvailable: boolean;
+  exposureLoading: boolean;
+  exposureFetching: boolean;
+  exposureError: string | null;
+  showExposureOnMap: boolean;
+  onShowExposureOnMapChange: (show: boolean) => void;
   onClose: () => void;
 }
 
@@ -432,6 +441,13 @@ export function EventDetailPanel({
   event,
   location,
   radius,
+  exposure,
+  exposureAvailable,
+  exposureLoading,
+  exposureFetching,
+  exposureError,
+  showExposureOnMap,
+  onShowExposureOnMapChange,
   onClose,
 }: EventDetailPanelProps) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
@@ -646,6 +662,17 @@ export function EventDetailPanel({
             </div>
             <SupplementalFields raw={event.raw} />
           </div>
+        )}
+
+        {exposureAvailable && (
+          <ExposureContextPanel
+            result={exposure}
+            isLoading={exposureLoading}
+            isFetching={exposureFetching}
+            error={exposureError}
+            showOnMap={showExposureOnMap}
+            onShowOnMapChange={onShowExposureOnMapChange}
+          />
         )}
 
         <div style={styles.actionRow}>

@@ -36,7 +36,7 @@ function sourceColor(source: SupplementalSource): string {
       return "#bf360c";
     case "GVP":
       return "#ef6c00";
-    case "HDX":
+    case "HOT":
       return "#37474f";
     default:
       return "#546e7a";
@@ -76,6 +76,7 @@ function popupContent(
   onSignalClick?: (signal: SupplementalRiskSignal) => void
 ): React.ReactNode {
   const baseline = signal.context === "baseline";
+  const exposure = signal.context === "exposure";
   return (
     <>
       <strong>{signal.headline}</strong>
@@ -86,12 +87,20 @@ function popupContent(
           <br />
         </>
       )}
+      {exposure && (
+        <>
+          <span style={exposureBadgeStyle}>Exposure context · not a risk signal</span>
+          <br />
+        </>
+      )}
       {signal.description}
       <br />
       <em style={{ fontSize: 11 }}>
         {baseline
           ? "Smithsonian Global Volcanism Program reference record"
-          : `${signal.source} · ${signal.severity} · Updated ${formatTime(signal.updatedAt)}`}
+          : exposure
+            ? "HOT / OpenStreetMap mapped facility"
+            : `${signal.source} · ${signal.severity} · Updated ${formatTime(signal.updatedAt)}`}
       </em>
       {signal.metrics.length > 0 && (
         <>
@@ -135,6 +144,7 @@ export function SupplementalRiskMapLayers({
       {signals.map((signal) => {
         const color = sourceColor(signal.source);
         const baseline = signal.context === "baseline";
+        const exposure = signal.context === "exposure";
         if (signal.geometry.type === "Point") {
           return (
             <CircleMarker
@@ -144,13 +154,15 @@ export function SupplementalRiskMapLayers({
               pathOptions={{
                 color,
                 fillColor: color,
-                fillOpacity: baseline ? 0.12 : 0.65,
+                fillOpacity: baseline || exposure ? 0.12 : 0.65,
                 weight: 2,
-                dashArray: baseline ? "4 3" : undefined,
+                dashArray: baseline || exposure ? "4 3" : undefined,
               }}
               eventHandlers={accessiblePath(
                 baseline
                   ? `${signal.headline}, historical volcano baseline, not an active alert`
+                  : exposure
+                    ? `${signal.headline}, mapped facility exposure context, not a risk signal`
                   : `${signal.headline}, ${signal.severity} ${signal.category}`
               )}
             >
@@ -231,6 +243,12 @@ const baselineBadgeStyle: React.CSSProperties = {
   color: "#a84300",
   fontSize: 10,
   fontWeight: 800,
+};
+
+const exposureBadgeStyle: React.CSSProperties = {
+  ...baselineBadgeStyle,
+  background: "#eceff1",
+  color: "#37474f",
 };
 
 const officialLinkStyle: React.CSSProperties = {

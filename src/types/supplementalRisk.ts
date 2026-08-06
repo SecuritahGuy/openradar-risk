@@ -14,7 +14,7 @@ export type SupplementalSource =
   | "DROUGHT"
   | "VOLCANO"
   | "GVP"
-  | "HDX";
+  | "HOT";
 
 export type SupplementalCategory =
   | "Storm Outlook"
@@ -57,7 +57,7 @@ export interface SupplementalRiskSignal {
   id: string;
   source: SupplementalSource;
   sourceEventId: string;
-  context?: "active" | "baseline";
+  context?: "active" | "baseline" | "exposure";
   category: SupplementalCategory;
   type: string;
   severity: Severity;

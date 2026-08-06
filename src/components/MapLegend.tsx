@@ -38,6 +38,12 @@ const VOLCANO_BASELINE_ITEM: LegendItem = {
   shape: "ring",
 };
 
+const EXPOSURE_FACILITY_ITEM: LegendItem = {
+  label: "Mapped facility context",
+  color: "#37474f",
+  shape: "ring",
+};
+
 function weatherModeItems(mode: WeatherLayerMode): LegendItem[] {
   if (mode === "precip") {
     return [
@@ -140,18 +146,23 @@ export function MapLegend({
   showWeatherOverlay,
   weatherLayerMode,
   showVolcanoBaseline,
+  showExposureFacilities,
 }: {
   showWeatherOverlay: boolean;
   weatherLayerMode: WeatherLayerMode;
   showVolcanoBaseline: boolean;
+  showExposureFacilities: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(max-width: 760px)").matches;
   });
-  const baseItems = showVolcanoBaseline
+  const baselineItems = showVolcanoBaseline
     ? [...ITEMS, VOLCANO_BASELINE_ITEM]
     : ITEMS;
+  const baseItems = showExposureFacilities
+    ? [...baselineItems, EXPOSURE_FACILITY_ITEM]
+    : baselineItems;
   const items = showWeatherOverlay
     ? [...baseItems, ...weatherModeItems(weatherLayerMode), ...WEATHER_ZONE_ITEMS]
     : baseItems;

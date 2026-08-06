@@ -42,7 +42,8 @@ describe("public site routes", () => {
     expect(methodology).toContain("each location evaluated in a separate queued Worker invocation");
     expect(methodology).toContain("NWS, USGS, NIFC, NHC, JMA, GDACS, and NASA EONET");
     expect(methodology).toContain("They do not enter the active feed, risk posture, incident correlation, or background notifications");
-    expect(privacy).toContain("Last reviewed July 23, 2026");
+    expect(privacy).toContain("Last reviewed July 29, 2026");
+    expect(privacy).toContain("Humanitarian OpenStreetMap Team API");
     expect(privacy).toContain("routinely removed after 30 days");
     expect(about).toContain("explicitly enable background monitoring");
     expect(sources).toContain("aggregate active-storm forecast-point layer");

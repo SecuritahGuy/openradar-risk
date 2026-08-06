@@ -68,7 +68,7 @@ Statuses below reflect live HTTP + CORS + payload testing performed from the pro
 | SPEI Global Drought Monitor | Global (1° grid) | Standardized Precipitation-Evapotranspiration Index, 1–48 mo | NetCDF download `spei.csic.es`; no key; no point API | ODbL / CC-BY 3.0 | US Drought Monitor is US-only; standardized global drought | **Pending** (download page 404'd in test; verify URL) |
 | ReliefWeb (UN OCHA) | Global | Curated disaster events/reports/appeals, affected population | REST `api.reliefweb.int/v2/...?appname=PREAPPROVED`; no key, pre-approved appname | UN OCHA; attribution | Humanitarian context layer vs. GDACS | **Validated (appname-gated)** (403 without approved appname; request appname) |
 | ACLED | Global | Political violence, battles, explosions, violence vs civilians, protests | REST `api.acleddata.com/` + HDX CSV; free account+key | CC-BY 4.0 (HDX) | Civil/humanitarian "conflict hazard" layer absent | **Pending** (HDX dataset 404'd in test; verify slug) |
-| HDX / HOT OSM exports | Global (where mapped) | Health facilities, schools, airports, population, POIs (GeoJSON) | `data.humdata.org` per-country GeoJSON; no key | CC-BY 4.0 / OSM ODbL | Critical-infrastructure / building exposure gap | **Validated** (CKAN API 200, CORS `*`, real JSON) |
+| HDX / HOT OSM exports | Global (where mapped) | Health facilities, schools, airports, population, POIs (GeoJSON) | Key-free HOT Raw Data API bounded plain-GeoJSON queries; HDX country exports remain available for research | OSM ODbL / dataset-specific HDX terms | Critical-infrastructure / building exposure gap | ✅ **Active for health and education exposure context** within 0.7 miles of an opened incident; excluded from risk and notifications |
 
 ---
 
