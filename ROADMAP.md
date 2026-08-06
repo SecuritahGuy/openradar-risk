@@ -55,6 +55,7 @@ These sources are part of the current web codebase. "Main dashboard" indicates t
 | USGS Volcanoes | United States | Volcano alert levels (WATCH/ADVISORY/NORMAL) | Main dashboard and environmental signals |
 | UK Environment Agency | England | Active flood warnings | Main dashboard |
 | Smithsonian GVP | Global | Holocene volcano locations, geology, and eruption history | Nearby map and baseline context; excluded from current risk and notifications |
+| HOT / OpenStreetMap exposure | Global where mapped | Nearby hospitals, clinics, and schools | Key-free, incident-triggered detail and optional map context within a bounded 0.7-mile area; excluded from risk and notifications |
 
 ### Web priorities
 
@@ -76,8 +77,8 @@ The web application supports explicitly enabled Cloudflare background watches an
 | Area | Why It Matters | Notes |
 |------|----------------|-------|
 | Expand provider-aware incident correlation | The canonical incident layer now groups transitively and deterministically, distinguishes providers behind shared source families, prefers authoritative sources, and preserves contributors | Continue adding category-specific rules only where provider semantics support them |
-| Enforce feed freshness and locality contracts | Cached data is now reported as degraded rather than failed, hard-error summaries exclude usable cached responses, and time-sensitive open events use source-specific freshness windows | USGS Water and NOAA CO-OPS now reject readings over six hours old or invalid and enforce exact nearby relevance; continue requiring explicit contracts for promoted adapters |
-| Add focused tests around adapters | Normalization and severity mapping are high-value deterministic logic | GeoNet, DWD, USGS Water, and NOAA CO-OPS now have focused activation/locality, normalization, freshness, and failure-isolation coverage; continue with remaining authoritative adapters |
+| Enforce feed freshness and locality contracts | Cached data is now reported as degraded rather than failed, hard-error summaries exclude usable cached responses, and time-sensitive open events use source-specific freshness windows | Current-signal summaries now share the active feed's freshness rules; USGS Water and NOAA CO-OPS reject readings over six hours old or invalid and enforce exact nearby relevance |
+| Add focused tests around adapters | Normalization and severity mapping are high-value deterministic logic | GeoNet, DWD, JMA, USGS Water, and NOAA CO-OPS now have focused activation/locality, normalization, freshness, proxy, and failure-isolation coverage; continue with remaining authoritative adapters |
 | Add the next validated authoritative source | New integrations should fill a defined product gap without weakening attribution or reliability | Prefer candidates from the researched backlog with no key and clear licensing |
 | Keep roadmap status aligned with shipped code | Multiple source integrations have moved quickly | Treat this file as canonical and update source status in the same PR as integration work |
 
@@ -118,6 +119,8 @@ The web application supports explicitly enabled Cloudflare background watches an
 | GlobalBuildingAtlas | Global | Building footprint counts, heights, density — for impact exposure analysis |
 | IBTrACS | Global historical tropical cyclones | Historical context, not live risk feed |
 | WMO CAP warning aggregation | Global by country | Valuable but source discovery and normalization are complex |
+
+HDX / HOT OpenStreetMap facility exposure is active as a contextual capability rather than a live hazard feed. It uses the key-free HOT Raw Data API only when an incident detail is opened, queries a provider-bounded 0.7-mile area, and never affects severity or notifications.
 
 BoM Australia warning feeds were revalidated in July 2026 and are not eligible for production promotion under the anonymous/API terms observed. Reconsider only after obtaining a registered-user publishing agreement from the Bureau.
 

@@ -4,6 +4,13 @@ import type { RiskEvent, Severity } from "../types/riskEvent";
 const BASE = "https://www.jma.go.jp/bosai/typhoon/data";
 const MONITOR_RADIUS_FLOOR_MILES = 300;
 
+export function buildJmaDataUrl(
+  file: "targetTc.json" | "pastTracks.json",
+  browser = typeof window !== "undefined"
+): string {
+  return browser ? `/api/jma/typhoons?file=${file}` : `${BASE}/${file}`;
+}
+
 export interface JmaTargetCyclone {
   tropicalCyclone: string;
   typhoonNumber: string;
@@ -98,11 +105,11 @@ export async function fetchJmaCyclones(
   longitude: number,
   radiusMiles: number
 ): Promise<RiskEvent[]> {
-  const targetResponse = await fetch(`${BASE}/targetTc.json`);
+  const targetResponse = await fetch(buildJmaDataUrl("targetTc.json"));
   if (!targetResponse.ok) throw new Error(`JMA target list returned ${targetResponse.status}`);
   const targets = await targetResponse.json() as JmaTargetCyclone[];
   if (!Array.isArray(targets) || targets.length === 0) return [];
-  const trackResponse = await fetch(`${BASE}/pastTracks.json`);
+  const trackResponse = await fetch(buildJmaDataUrl("pastTracks.json"));
   if (!trackResponse.ok) throw new Error(`JMA track list returned ${trackResponse.status}`);
   const tracks = await trackResponse.json() as JmaPastTrack[];
   const monitoringRadius = Math.max(radiusMiles, MONITOR_RADIUS_FLOOR_MILES);

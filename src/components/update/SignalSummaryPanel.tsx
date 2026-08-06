@@ -1,6 +1,6 @@
 import type { RiskEvent } from "../../types/riskEvent";
 import type { SupplementalRiskSignal } from "../../types/supplementalRisk";
-import { severityColor } from "../../lib/riskInsights";
+import { activeConcernEvents, severityColor } from "../../lib/riskInsights";
 
 interface SignalSummaryPanelProps {
   weatherAlerts: RiskEvent[];
@@ -108,6 +108,19 @@ export function SignalSummaryPanel({
   baselineSignals,
   isFetching,
 }: SignalSummaryPanelProps) {
+  const now = Date.now();
+  const currentWeatherAlerts = activeConcernEvents(weatherAlerts, now);
+  const currentEarthquakes = activeConcernEvents(earthquakes, now);
+  const currentWildfires = activeConcernEvents(wildfires, now);
+  const currentSpcOutlooks = activeConcernEvents(spcOutlooks, now);
+  const currentSpcReports = activeConcernEvents(spcReports, now);
+  const currentNhcStorms = activeConcernEvents(nhcStorms, now);
+  const currentGdacsEvents = activeConcernEvents(gdacsEvents, now);
+  const currentEonetEvents = activeConcernEvents(eonetEvents, now);
+  const currentEmscEvents = activeConcernEvents(emscEvents, now);
+  const currentGeonetEvents = activeConcernEvents(geonetEvents, now);
+  const currentGeonetVolcanoEvents = activeConcernEvents(geonetVolcanoEvents, now);
+  const currentDwdEvents = activeConcernEvents(dwdEvents, now);
   const airQualitySignals = supplementalSignals.filter((s) => s.category === "Air Quality");
   const marineSignals = supplementalSignals.filter((s) => s.category === "Coastal Water");
   const riverSignals = supplementalSignals.filter((s) => s.category === "River Gauge");
@@ -135,65 +148,65 @@ export function SignalSummaryPanel({
           Current signals
           {isFetching && <span style={styles.spinner}> &#8987;</span>}
         </div>
-        <SignalLine active={weatherAlerts.length > 0} color="#f57c00">
-          {weatherAlerts.length > 0
-            ? `${weatherAlerts.length} active weather alert${weatherAlerts.length !== 1 ? "s" : ""} nearby`
+        <SignalLine active={currentWeatherAlerts.length > 0} color="#f57c00">
+          {currentWeatherAlerts.length > 0
+            ? `${currentWeatherAlerts.length} active weather alert${currentWeatherAlerts.length !== 1 ? "s" : ""} nearby`
             : "No active weather alerts"}
         </SignalLine>
-        <SignalLine active={earthquakes.length > 0} color="#2e7d32">
-          {earthquakes.length > 0
-            ? `${earthquakes.length} earthquake${earthquakes.length !== 1 ? "s" : ""} nearby`
-            : "No earthquakes nearby"}
+        <SignalLine active={currentEarthquakes.length > 0} color="#2e7d32">
+          {currentEarthquakes.length > 0
+            ? `${currentEarthquakes.length} current earthquake${currentEarthquakes.length !== 1 ? "s" : ""} nearby`
+            : "No current earthquakes nearby"}
         </SignalLine>
-        <SignalLine active={emscEvents.length > 0} color="#43a047">
-          {emscEvents.length > 0
-            ? `${emscEvents.length} EMSC earthquake${emscEvents.length !== 1 ? "s" : ""} nearby`
-            : "No EMSC earthquakes nearby"}
+        <SignalLine active={currentEmscEvents.length > 0} color="#43a047">
+          {currentEmscEvents.length > 0
+            ? `${currentEmscEvents.length} current EMSC earthquake${currentEmscEvents.length !== 1 ? "s" : ""} nearby`
+            : "No current EMSC earthquakes nearby"}
         </SignalLine>
-        <SignalLine active={geonetEvents.length > 0} color="#2e7d32">
-          {geonetEvents.length > 0
-            ? `${geonetEvents.length} GeoNet earthquake${geonetEvents.length !== 1 ? "s" : ""} nearby`
-            : "No GeoNet earthquakes nearby"}
+        <SignalLine active={currentGeonetEvents.length > 0} color="#2e7d32">
+          {currentGeonetEvents.length > 0
+            ? `${currentGeonetEvents.length} current GeoNet earthquake${currentGeonetEvents.length !== 1 ? "s" : ""} nearby`
+            : "No current GeoNet earthquakes nearby"}
         </SignalLine>
-        <SignalLine active={geonetVolcanoEvents.length > 0} color="#8d6e63">
-          {geonetVolcanoEvents.length > 0
-            ? `${geonetVolcanoEvents.length} elevated GeoNet volcanic alert${geonetVolcanoEvents.length !== 1 ? "s" : ""} nearby`
+        <SignalLine active={currentGeonetVolcanoEvents.length > 0} color="#8d6e63">
+          {currentGeonetVolcanoEvents.length > 0
+            ? `${currentGeonetVolcanoEvents.length} elevated GeoNet volcanic alert${currentGeonetVolcanoEvents.length !== 1 ? "s" : ""} nearby`
             : "No elevated GeoNet volcanic alerts nearby"}
         </SignalLine>
-        <SignalLine active={dwdEvents.length > 0} color="#1565c0">
-          {dwdEvents.length > 0
-            ? `${dwdEvents.length} official DWD warning${dwdEvents.length !== 1 ? "s" : ""} nearby`
+        <SignalLine active={currentDwdEvents.length > 0} color="#1565c0">
+          {currentDwdEvents.length > 0
+            ? `${currentDwdEvents.length} official DWD warning${currentDwdEvents.length !== 1 ? "s" : ""} nearby`
             : "No DWD warnings nearby"}
         </SignalLine>
-        <SignalLine active={wildfires.length > 0} color="#d84315">
-          {wildfires.length > 0
-            ? `${wildfires.length} wildfire${wildfires.length !== 1 ? "s" : ""} nearby`
-            : "No wildfires nearby"}
+        <SignalLine active={currentWildfires.length > 0} color="#d84315">
+          {currentWildfires.length > 0
+            ? `${currentWildfires.length} current wildfire${currentWildfires.length !== 1 ? "s" : ""} nearby`
+            : "No current wildfires nearby"}
         </SignalLine>
-        <SignalLine active={spcOutlooks.length > 0} color="#00897b">
-          {spcOutlooks.length > 0
-            ? `${spcOutlooks.length} SPC outlook polygon${spcOutlooks.length !== 1 ? "s" : ""} nearby`
+        <SignalLine active={currentSpcOutlooks.length > 0} color="#00897b">
+          {currentSpcOutlooks.length > 0
+            ? `${currentSpcOutlooks.length} SPC outlook polygon${currentSpcOutlooks.length !== 1 ? "s" : ""} nearby`
             : "No SPC outlook polygons nearby"}
         </SignalLine>
-        <SignalLine active={spcReports.length > 0} color="#00796b">
-          {spcReports.length > 0
-            ? `${spcReports.length} preliminary SPC storm report${spcReports.length !== 1 ? "s" : ""} nearby today`
+        <SignalLine active={currentSpcReports.length > 0} color="#00796b">
+          {currentSpcReports.length > 0
+            ? `${currentSpcReports.length} preliminary SPC storm report${currentSpcReports.length !== 1 ? "s" : ""} nearby today`
             : "No preliminary SPC storm reports nearby today"}
         </SignalLine>
-        <SignalLine active={nhcStorms.length > 0} color="#c62828">
-          {nhcStorms.length > 0
-            ? `${nhcStorms.length} active tropical cyclone${nhcStorms.length !== 1 ? "s" : ""} in range`
+        <SignalLine active={currentNhcStorms.length > 0} color="#c62828">
+          {currentNhcStorms.length > 0
+            ? `${currentNhcStorms.length} active tropical cyclone${currentNhcStorms.length !== 1 ? "s" : ""} in range`
             : "No active tropical cyclones in range"}
         </SignalLine>
-        <SignalLine active={gdacsEvents.length > 0} color="#1565c0">
-          {gdacsEvents.length > 0
-            ? `${gdacsEvents.length} GDACS global event${gdacsEvents.length !== 1 ? "s" : ""} nearby`
-            : "No GDACS global events nearby"}
+        <SignalLine active={currentGdacsEvents.length > 0} color="#1565c0">
+          {currentGdacsEvents.length > 0
+            ? `${currentGdacsEvents.length} current GDACS global event${currentGdacsEvents.length !== 1 ? "s" : ""} nearby`
+            : "No current GDACS global events nearby"}
         </SignalLine>
-        <SignalLine active={eonetEvents.length > 0} color="#6a1b9a">
-          {eonetEvents.length > 0
-            ? `${eonetEvents.length} NASA EONET event${eonetEvents.length !== 1 ? "s" : ""} nearby`
-            : "No NASA EONET events nearby"}
+        <SignalLine active={currentEonetEvents.length > 0} color="#6a1b9a">
+          {currentEonetEvents.length > 0
+            ? `${currentEonetEvents.length} current NASA EONET event${currentEonetEvents.length !== 1 ? "s" : ""} nearby`
+            : "No current NASA EONET events nearby"}
         </SignalLine>
         <SignalLine active={volcanoSignals.length > 0} color="#8d6e63">
           {volcanoSignals.length > 0

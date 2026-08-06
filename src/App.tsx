@@ -9,6 +9,7 @@ import { RiskCommandBar } from "./components/RiskCommandBar";
 import { OfflineBanner } from "./components/OfflineBanner";
 import { useResolvedLocation } from "./hooks/useResolvedLocation";
 import { useNwsWeatherOverlay } from "./hooks/useNwsWeatherOverlay";
+import { useHdxExposure } from "./hooks/useHdxExposure";
 import { useRiskFeeds } from "./hooks/useRiskFeeds";
 import { useSavedLocations } from "./hooks/useSavedLocations";
 import { useSavedLocationRiskSummaries } from "./hooks/useSavedLocationRiskSummaries";
@@ -207,6 +208,7 @@ export default function App() {
   const [sourceFilters, setSourceFilters] = useState(readInitialSourceFilters);
   const [severityFilters, setSeverityFilters] = useState(readInitialSeverityFilters);
   const [selectedEvent, setSelectedEvent] = useState<RiskEvent | null>(null);
+  const [showExposureOnMap, setShowExposureOnMap] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
 
@@ -236,6 +238,8 @@ export default function App() {
     lastUpdated,
     isFetching,
   } = useRiskFeeds(result, radius);
+
+  const exposure = useHdxExposure(selectedEvent, result);
 
   const {
     overlay: weatherOverlay,
@@ -547,6 +551,7 @@ export default function App() {
   }, []);
 
   const handleSelectEvent = useCallback((event: RiskEvent) => {
+    setShowExposureOnMap(false);
     setSelectedEvent(event);
   }, []);
 
@@ -707,6 +712,7 @@ export default function App() {
             radius={radius}
             events={filteredEvents}
             baselineSignals={baselineSignals}
+            exposureSignals={showExposureOnMap ? exposure.data?.facilities ?? [] : []}
             weatherOverlay={weatherOverlay}
             showWeatherOverlay={showWeatherOverlay}
             weatherLayerMode={weatherLayerMode}
@@ -819,7 +825,17 @@ export default function App() {
           event={selectedEvent}
           location={result}
           radius={radius}
-          onClose={() => setSelectedEvent(null)}
+          exposure={exposure.data}
+          exposureAvailable={exposure.available}
+          exposureLoading={exposure.isLoading}
+          exposureFetching={exposure.isFetching}
+          exposureError={exposure.error}
+          showExposureOnMap={showExposureOnMap}
+          onShowExposureOnMapChange={setShowExposureOnMap}
+          onClose={() => {
+            setShowExposureOnMap(false);
+            setSelectedEvent(null);
+          }}
         />
       )}
     </div>

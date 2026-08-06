@@ -81,6 +81,7 @@ OpenRisk Radar brings authoritative feeds into a single geospatial workflow. It 
 - Automatic GeoNet earthquake and elevated volcanic-alert coverage for resolved New Zealand locations.
 - Automatic DWD official warning coverage for resolved German locations, filtered to the selected radius.
 - Nearby Smithsonian GVP volcano records shown as historical baseline context without affecting current risk or notifications.
+- Key-free HOT/OpenStreetMap exposure context shows mapped hospitals, clinics, and schools near an opened incident without changing risk or notifications.
 - Recent WHO Disease Outbreak News scoped by outbreak-title country; reports affect local posture only when they also name the searched state, county, or city.
 - Normalized `RiskEvent` model for source, category, severity, timing, geometry, confidence, and attribution.
 - Severity and impact classification for quick triage.
@@ -112,6 +113,7 @@ This table reflects the current codebase. "Main dashboard" means the source is f
 | Global Disaster Alert and Coordination System (GDACS) | Global | Earthquakes, tropical cyclones, floods, volcanoes, wildfires, droughts | Main dashboard | `src/services/gdacs.ts` |
 | NASA EONET | Global | Earth observation natural events | Main dashboard | `src/services/eonet.ts` |
 | Smithsonian Global Volcanism Program | Global | Holocene volcano locations, geology, and eruption history | Nearby map and baseline context only; excluded from current risk and notifications | `src/services/gvp.ts` |
+| Humanitarian OpenStreetMap Team / OpenStreetMap | Global where mapped | Hospitals, clinics, and schools near an opened incident | On-demand exposure detail and optional map markers; excluded from risk and notifications | `src/services/hdx.ts` |
 | Open-Meteo | Global | Weather fallback, air quality, marine conditions | Current conditions fallback and environmental signals panel | `src/services/openMeteo.ts` |
 | Nominatim / OpenStreetMap | Global | Geocoding and reverse geocoding | Location resolution fallback | `src/services/nominatim.ts` |
 | Local lookup tables | United States | ZIP/city/state/county/FIPS lookup | Fast location resolution | `src/data/` |
@@ -124,8 +126,9 @@ This table reflects the current codebase. "Main dashboard" means the source is f
 3. Source-specific adapters call authoritative public APIs.
 4. Source records normalize into `RiskEvent` objects where they participate in common filtering, sorting, severity, and impact logic.
 5. React Query caches feed results by location, radius, and source-specific parameters.
-6. Leaflet renders points, polygons, radius rings, weather overlays, and popups.
-7. Dexie stores saved locations locally in browser IndexedDB.
+6. Opening an incident optionally requests a bounded, key-free HOT/OpenStreetMap facility extract for exposure context.
+7. Leaflet renders points, polygons, radius rings, weather overlays, and popups.
+8. Dexie stores saved locations locally in browser IndexedDB.
 
 ## Architecture
 
@@ -229,7 +232,7 @@ MIT License. See [LICENSE](LICENSE).
 
 ## Data Provider Acknowledgments
 
-OpenRiskRadar depends on public data and APIs from the National Weather Service, U.S. Geological Survey, FEMA, National Interagency Fire Center, NOAA Storm Prediction Center, National Hurricane Center, GDACS, NASA EONET, Open-Meteo, Nominatim/OpenStreetMap, and OpenStreetMap tile contributors. Each provider retains ownership of its data and terms of use.
+OpenRiskRadar depends on public data and APIs from the National Weather Service, U.S. Geological Survey, FEMA, National Interagency Fire Center, NOAA Storm Prediction Center, National Hurricane Center, GDACS, NASA EONET, Open-Meteo, the Humanitarian OpenStreetMap Team, Nominatim/OpenStreetMap, and OpenStreetMap tile contributors. Each provider retains ownership of its data and terms of use.
 
 ## Support
 

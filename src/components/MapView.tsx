@@ -56,6 +56,7 @@ interface MapViewProps {
   radius: RadiusOption;
   events: RiskEvent[];
   baselineSignals: SupplementalRiskSignal[];
+  exposureSignals: SupplementalRiskSignal[];
   weatherOverlay: NwsWeatherOverlay | null;
   showWeatherOverlay: boolean;
   weatherLayerMode: WeatherLayerMode;
@@ -687,6 +688,7 @@ export function MapView({
   radius,
   events,
   baselineSignals,
+  exposureSignals,
   weatherOverlay,
   showWeatherOverlay,
   weatherLayerMode,
@@ -882,6 +884,7 @@ export function MapView({
           onEventClick={onEventClick}
         />
         <SupplementalRiskMapLayers signals={baselineSignals} />
+        <SupplementalRiskMapLayers signals={exposureSignals} />
         <ClickSearchMarker
           point={pendingPoint}
           onClickPoint={handleClickPoint}
@@ -901,6 +904,7 @@ export function MapView({
           showWeatherOverlay={showWeatherOverlay}
           weatherLayerMode={weatherLayerMode}
           showVolcanoBaseline={baselineSignals.length > 0}
+          showExposureFacilities={exposureSignals.length > 0}
         />
       </MapContainer>
       <MapControlPanel

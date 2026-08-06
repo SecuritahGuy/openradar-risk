@@ -8,6 +8,7 @@ import { onRequestGet as calFire } from "../functions/api/regional/cal-fire";
 import { onRequestGet as traffic } from "../functions/api/traffic";
 import { onRequestGet as emsc } from "../functions/api/emsc";
 import { onRequestGet as smithsonianGvp } from "../functions/api/smithsonian/gvp";
+import { onRequestGet as jmaTyphoons } from "../functions/api/jma/typhoons";
 import { jsonError } from "../functions/_shared/proxy";
 import type { D1Database } from "./d1";
 import { deliverPushMessage, markPushDeliveryExhausted, type PushDeliveryEnv } from "./pushDelivery";
@@ -56,6 +57,7 @@ const apiRoutes = new Map<string, (context: { request: Request }) => Promise<Res
   ["/api/traffic", traffic],
   ["/api/emsc", emsc],
   ["/api/smithsonian/gvp", smithsonianGvp],
+  ["/api/jma/typhoons", jmaTyphoons],
 ]);
 
 const sourceStatus = [
@@ -69,6 +71,7 @@ const sourceStatus = [
   { id: "usdot-wzdx", label: "USDOT Work Zone Data Exchange", route: "/api/traffic", cacheSeconds: 90 },
   { id: "emsc", label: "EMSC Earthquakes", route: "/api/emsc", cacheSeconds: 60 },
   { id: "smithsonian-gvp", label: "Smithsonian Volcano Reference", route: "/api/smithsonian/gvp", cacheSeconds: 86_400 },
+  { id: "jma-typhoons", label: "JMA Tropical Cyclones", route: "/api/jma/typhoons", cacheSeconds: 300 },
 ];
 
 function pushConfigured(env: Env): boolean {
