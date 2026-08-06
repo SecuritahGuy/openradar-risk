@@ -73,12 +73,12 @@ export interface RiskScoreExplanation {
   sourceCounts: RiskSourceCount[];
 }
 
-const STALE_CONCERN_MS = 90 * 24 * 60 * 60 * 1000;
+const STALE_CONCERN_MS = 7 * 24 * 60 * 60 * 1000;
 const SEISMIC_CONCERN_MS: Record<Severity, number> = {
   Minor: 24 * 60 * 60 * 1000,
-  Moderate: 7 * 24 * 60 * 60 * 1000,
-  Severe: 30 * 24 * 60 * 60 * 1000,
-  Extreme: 30 * 24 * 60 * 60 * 1000,
+  Moderate: 3 * 24 * 60 * 60 * 1000,
+  Severe: 7 * 24 * 60 * 60 * 1000,
+  Extreme: 7 * 24 * 60 * 60 * 1000,
 };
 
 const SOURCE_CONCERN_MS: Partial<Record<EventSource, number>> = {
@@ -87,9 +87,9 @@ const SOURCE_CONCERN_MS: Partial<Record<EventSource, number>> = {
   NHC: 3 * 24 * 60 * 60 * 1000,
   JMA: 3 * 24 * 60 * 60 * 1000,
   SPC: 2 * 24 * 60 * 60 * 1000,
-  GDACS: 30 * 24 * 60 * 60 * 1000,
-  EONET: 45 * 24 * 60 * 60 * 1000,
-  WHO: 45 * 24 * 60 * 60 * 1000,
+  GDACS: 7 * 24 * 60 * 60 * 1000,
+  EONET: 7 * 24 * 60 * 60 * 1000,
+  WHO: 7 * 24 * 60 * 60 * 1000,
 };
 
 export function defaultSourceFilters(): SourceFilters {
@@ -331,17 +331,17 @@ export function isStaleConcernEvent(
 
   if (event.category === "Seismic") {
     const started = new Date(event.startedAt).getTime();
-    return !Number.isNaN(started) && nowMs - started > SEISMIC_CONCERN_MS[event.severity];
+    return !Number.isNaN(started) && nowMs - started >= SEISMIC_CONCERN_MS[event.severity];
   }
 
   const sourceWindow = SOURCE_CONCERN_MS[event.source];
   if (sourceWindow != null) {
     const started = new Date(event.startedAt).getTime();
-    return !Number.isFinite(started) || nowMs - started > sourceWindow;
+    return !Number.isFinite(started) || nowMs - started >= sourceWindow;
   }
 
   const updated = new Date(event.updatedAt).getTime();
-  return !Number.isNaN(updated) && nowMs - updated > STALE_CONCERN_MS;
+  return !Number.isNaN(updated) && nowMs - updated >= STALE_CONCERN_MS;
 }
 
 export function activeConcernEvents(

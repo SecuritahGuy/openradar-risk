@@ -65,8 +65,6 @@ function agreementColor(agreement: SignalAgreement): string {
       return "#2e7d32";
     case "single-source":
       return "#ef6c00";
-    case "stale":
-      return "#616161";
   }
 }
 
@@ -293,7 +291,7 @@ export function RiskCommandBar({
         <div style={styles.agreementHeader}>
           <span style={styles.scoreLabel}>Source agreement</span>
           <span style={styles.agreementHint}>
-            Correlates related signals across feeds
+            Confirms the same incident across independent providers
           </span>
         </div>
         <div className="source-agreement-list" style={styles.agreementList}>
@@ -328,7 +326,7 @@ export function RiskCommandBar({
                   </span>
                   <span style={styles.agreementTitle}>{signal.label}</span>
                   <span style={styles.agreementMeta}>
-                    {signal.sources.map(sourceLabel).join(" + ")} · {signal.eventCount} signal
+                    {signal.providerLabels.join(" + ")} · {signal.eventCount} provider record
                     {signal.eventCount !== 1 ? "s" : ""}
                     {signal.latestUpdatedAt
                       ? ` · updated ${timeAgo(signal.latestUpdatedAt)}`

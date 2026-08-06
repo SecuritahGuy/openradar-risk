@@ -63,6 +63,13 @@ describe("riskInsights", () => {
       severity: "Moderate",
       startedAt: "2026-07-12T00:00:00Z",
     }), now)).toBe(false);
+    expect(isStaleConcernEvent(event({
+      category: "Seismic",
+      source: "USGS",
+      severity: "Severe",
+      startedAt: "2026-07-06T12:00:00Z",
+      updatedAt: "2026-07-13T11:59:00Z",
+    }), now)).toBe(true);
   });
 
   it("computes practical distance between two points", () => {
@@ -266,6 +273,36 @@ describe("riskInsights", () => {
     expect(concernContextLabel(expired)).toBe("Expired");
     expect(activeConcernEvents([expired, veryOld, current], now).map((e) => e.id))
       .toEqual(["current"]);
+  });
+
+  it("moves week-old open incidents to history unless the provider gives an active expiry", () => {
+    const weekOld = event({
+      id: "week-old",
+      source: "EONET",
+      category: "Wildfire",
+      startedAt: "2026-07-06T12:00:00Z",
+      updatedAt: "2026-07-06T12:00:00Z",
+      expiresAt: null,
+    });
+    const explicitlyActive = event({
+      id: "explicitly-active",
+      source: "NWS",
+      startedAt: "2026-07-01T00:00:00Z",
+      updatedAt: "2026-07-01T00:00:00Z",
+      expiresAt: "2026-07-13T13:00:00Z",
+    });
+    const recentlyUpdatedFire = event({
+      id: "updated-fire",
+      source: "NIFC",
+      category: "Wildfire",
+      startedAt: "2026-06-01T00:00:00Z",
+      updatedAt: "2026-07-13T11:00:00Z",
+      expiresAt: null,
+    });
+
+    expect(activeConcernEvents([weekOld, explicitlyActive, recentlyUpdatedFire], now)
+      .map((item) => item.id)).toEqual(["explicitly-active", "updated-fire"]);
+    expect(concernContextLabel(weekOld)).toBe("Older");
   });
 
   it("uses short source-specific windows for time-sensitive open events", () => {

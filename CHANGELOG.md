@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Incident-based source agreement
+
+- Replaced category-wide source agreement with canonical incident agreement so unrelated signals from different providers are not described as corroborating one another.
+- Source agreement cards and situation briefs now identify independent provider confirmation only when spatial, temporal, category, and provider-aware incident rules group records together.
+- Added regression coverage for unrelated coastal and river readings, matched weather reports, matched earthquake reports, and single-source incidents.
+- Tightened non-expiring incident freshness to a conservative seven-day maximum, with shorter windows for lower-severity earthquakes and time-sensitive warnings.
+- Removed historical and stale markers from the default map; users can opt into historical map context or use the explicit History feed.
+
 ### Key-free facility exposure context
 
 - Added on-demand HOT/OpenStreetMap hospital, clinic, and education-facility context within a provider-bounded 0.7-mile area around an opened incident or searched point inside an alert polygon.

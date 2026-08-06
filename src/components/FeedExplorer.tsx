@@ -267,9 +267,9 @@ export function FeedExplorer({
         )}
         <div style={styles.modeTabs} aria-label="Feed explorer mode">
           {[
-            { value: "active", label: "Active" },
-            { value: "historical", label: "History" },
-            { value: "all", label: "All" },
+            { value: "active", label: "Active", title: "Current, unexpired, source-fresh incidents" },
+            { value: "historical", label: "History", title: "Expired and older context; not active" },
+            { value: "all", label: "All", title: "Current and historical records together" },
           ].map((item) => (
             <button
               key={item.value}
@@ -279,6 +279,7 @@ export function FeedExplorer({
                 ...(mode === item.value ? styles.modeButtonActive : {}),
               }}
               aria-pressed={mode === item.value}
+              title={item.title}
               onClick={() => setMode(item.value as FeedMode)}
             >
               {item.label}

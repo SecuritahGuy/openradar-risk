@@ -16,7 +16,7 @@ Statuses below reflect live HTTP + CORS + payload testing performed from the pro
 - **NOAA NTWC/PTWC Atom feeds** — active as the production fallback for the primary NOAA tsunami JSON endpoint; official feeds are proxied, filtered to actionable categories, and limited to 24 hours.
 - **DWD Germany** (WFS GeoJSON warning polygons) — active in production; browser-direct with CORS.
 - **GeoNet New Zealand** — 200, CORS `*`, GeoJSON (requires `MMI` param).
-- **HDX / HOT OSM** — CKAN API 200, CORS `*`, real JSON.
+- **HDX / HOT OSM** — active through key-free, bounded HOT Raw Data API GeoJSON queries; CKAN country exports remain research-only.
 
 ### ✅ Will work (free key/token required)
 - **OpenAQ** — 401 without `X-API-Key` (free key; CORS enabled).
@@ -79,7 +79,7 @@ Statuses below reflect live HTTP + CORS + payload testing performed from the pro
 | DWD (Germany) | Germany | Severe weather warnings (CAP/WFS), nowcast, pollen, radar | `maps.dwd.de/geoserver/dwd/ows` WFS GeoJSON; no key; CORS-enabled | DWD open data; attribution | Finer than Meteoalarm aggregate | ✅ Official municipality warning polygons active; automatically enabled for Germany and filtered by radius |
 | GeoNet (New Zealand) | New Zealand | Earthquakes and volcanic alert levels | `api.geonet.org.nz/quake?MMI=0` and `/volcano/val` GeoJSON (CORS `*`); no key | Free, CC-BY (cite DOIs) | Very active tectonics/volcanoes; browser-friendly | ✅ Earthquake and elevated volcanic-alert feeds active; no equivalent public landslide or tsunami endpoint is documented |
 | CWA (Taiwan) | Taiwan | Earthquakes, tsunami, typhoons, weather warnings | `opendata.cwa.gov.tw/api/v1/...` REST; free auth code | Open Gov Data License v1.0 | High quake/typhoon exposure, no current coverage | **Validated (key-gated)** (401 on bad key; endpoint live) |
-| JMA via P2Pquake / Wolfx | Japan | Earthquakes/EEW, tsunami, volcanic, typhoon | Official XML lacks CORS; use `api.p2pquake.net` or `api.wolfx.jp/jma_*.json` (free) | JMO "own risk"; secondary-use free | One of most seismic nations; no US/EU equivalent | **Pending** (third-party wrappers; verify CORS) |
+| JMA | Japan / western North Pacific | Earthquakes/EEW, tsunami, volcanic, typhoon | Official cyclone JSON is active through a cached Worker proxy; official XML for other hazards lacks CORS and would require a deliberate proxy/parser | JMA terms and attribution | Western North Pacific cyclone coverage is active; other authoritative Japanese hazards remain a gap | ✅ **Cyclone analyses active**; earthquake, EEW, tsunami, and volcanic integrations remain pending |
 | INMET WIS2 (Brazil) | Brazil | CAP weather warnings, SYNOP obs (GeoJSON) | OGC API `wis2bra.inmet.gov.br/oapi/collections/...`; no key; CORS `*` | WMO core data policy | Modern clean standard; fills South America | **Validated (obs only)** (CORS `*`, collections live; exposes SYNOP obs + `messages`, but NO CAP alert collection found) |
 | IMD / INCOIS (India) | India | District warnings, cyclone, tsunami JSON | `api.imd.gov.in/api/v1/...` (free key, possible IP whitelist) | IMD terms; attribution | Major population exposure (monsoon/cyclone) | **Pending** (free key; verify) |
 | BoM (Australia) | Australia | Severe weather/cyclone/flood warnings, flood gauge network | Current app JSON is CORS-readable; anonymous RSS/XML is automation-blocked | © Commonwealth of Australia; registered-user publishing/data agreement required | Australia floods/cyclones/bushfire weather | **Blocked on license** (live JSON metadata says it must not be used, copied, or shared; do not promote without written permission) |
@@ -101,7 +101,7 @@ Statuses below reflect live HTTP + CORS + payload testing performed from the pro
 
 ## Integration patterns & gotchas
 
-- **Browser-direct, no key, CORS-friendly today:** GIBS (WMTS), WMO SWIC/GDC (OGC API), WHO DON, OpenAQ, GeoNet, DWD WFS.
+- **Browser-direct, no key, CORS-friendly today:** GIBS (WMTS), WMO SWIC/GDC (OGC API), WHO DON, GeoNet, and DWD WFS. OpenAQ is CORS-friendly but requires a free API key.
 - **Official proxied fallback:** NOAA NTWC/PTWC Atom feeds, used only after the primary NOAA tsunami JSON path is empty or unavailable.
 - **Need free key but CORS-friendly:** NASA FIRMS (MAP_KEY), WAQI (token), UNESCO-IOC V2 (key), OpenAQ (key).
 - **Need a tiny proxy / CORS shim (breaks strict no-backend):** WMO SWIC node follows, CAMS/CEMS (server GRIB/NetCDF), AEMET/KNMI/IMD/CWA, P2Pquake/Wolfx, ACLED, ReliefWeb (appname).
@@ -111,6 +111,6 @@ Statuses below reflect live HTTP + CORS + payload testing performed from the pro
 ## Next steps
 
 1. Select from validated, license-compatible candidates based on the active gaps in `ROADMAP.md`; do not revive rejected Blitzortung work without a new access and licensing review.
-2. Prefer no-key authoritative sources such as WHO Disease Outbreak News, GeoNet, DWD, or official NOAA warning-center feeds when they fill a defined product gap.
+2. Prefer no-key authoritative sources and official warning-center feeds when they fill a defined product gap; WHO Disease Outbreak News, GeoNet, DWD, and NOAA tsunami warning-center fallbacks are already active reference patterns.
 3. Implement adapters following the `ROADMAP.md` integration pattern (`src/services/<source>.ts`, types, `useRiskFeeds.ts`, risk insights, panels, and CSP headers).
 4. Add fixture-based normalization tests and update `ROADMAP.md` in the same change that promotes a source into the active dashboard.
