@@ -48,8 +48,11 @@ interface UpdatePanelProps {
   sourceHealth: SourceHealthItem[];
   weatherOverlay: NwsWeatherOverlay | null;
   showWeatherOverlay: boolean;
+  showHistoricalMapContext: boolean;
+  historicalMapContextAvailable: boolean;
   weatherLayerMode: WeatherLayerMode;
   onToggleWeatherOverlay: (show: boolean) => void;
+  onToggleHistoricalMapContext: (show: boolean) => void;
   onWeatherLayerModeChange: (mode: WeatherLayerMode) => void;
   weatherOverlayLoading: boolean;
   weatherOverlayError: string | null;
@@ -103,8 +106,11 @@ export function UpdatePanel({
   sourceHealth,
   weatherOverlay,
   showWeatherOverlay,
+  showHistoricalMapContext,
+  historicalMapContextAvailable,
   weatherLayerMode,
   onToggleWeatherOverlay,
+  onToggleHistoricalMapContext,
   onWeatherLayerModeChange,
   weatherOverlayLoading,
   weatherOverlayError,
@@ -195,8 +201,11 @@ export function UpdatePanel({
             onRadiusChange={onRadiusChange}
             weatherOverlay={weatherOverlay}
             showWeatherOverlay={showWeatherOverlay}
+            showHistoricalMapContext={showHistoricalMapContext}
+            historicalMapContextAvailable={historicalMapContextAvailable}
             weatherLayerMode={weatherLayerMode}
             onToggleWeatherOverlay={onToggleWeatherOverlay}
+            onToggleHistoricalMapContext={onToggleHistoricalMapContext}
             onWeatherLayerModeChange={onWeatherLayerModeChange}
             weatherOverlayLoading={weatherOverlayLoading}
             weatherOverlayError={weatherOverlayError}

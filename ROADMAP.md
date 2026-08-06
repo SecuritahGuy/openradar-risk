@@ -40,6 +40,7 @@ These sources are part of the current web codebase. "Main dashboard" indicates t
 | SPC outlooks | United States | Day 1-3 convective outlook polygons | Main dashboard |
 | SPC storm reports | United States | Preliminary observed tornado, hail, and damaging-wind reports | Main dashboard |
 | NHC storms | Atlantic and Eastern/Central Pacific | Active tropical cyclones | Main dashboard when active/in range |
+| JMA tropical cyclones | Western North Pacific | Active official cyclone analyses and tracks | Main dashboard and background watches through a cached Worker proxy |
 | GDACS | Global | Earthquakes, cyclones, floods, volcanoes, wildfires, droughts | Main dashboard |
 | NASA EONET | Global | Earth observation natural events | Main dashboard |
 | NASA GIBS | Global | Dated true-color, thermal-anomaly, aerosol/smoke, and snow-cover imagery | Optional map overlay with product-specific native zoom limits |
@@ -76,7 +77,7 @@ The web application supports explicitly enabled Cloudflare background watches an
 
 | Area | Why It Matters | Notes |
 |------|----------------|-------|
-| Expand provider-aware incident correlation | The canonical incident layer now groups transitively and deterministically, distinguishes providers behind shared source families, prefers authoritative sources, and preserves contributors | Continue adding category-specific rules only where provider semantics support them |
+| Expand provider-aware incident correlation | The canonical incident layer now groups transitively and deterministically, distinguishes providers behind shared source families, prefers authoritative sources, and preserves contributors | Source agreement and situation briefs now use canonical incident metadata instead of broad category clusters; continue adding category-specific rules only where provider semantics support them |
 | Enforce feed freshness and locality contracts | Cached data is now reported as degraded rather than failed, hard-error summaries exclude usable cached responses, and time-sensitive open events use source-specific freshness windows | Current-signal summaries now share the active feed's freshness rules; USGS Water and NOAA CO-OPS reject readings over six hours old or invalid and enforce exact nearby relevance |
 | Add focused tests around adapters | Normalization and severity mapping are high-value deterministic logic | GeoNet, DWD, JMA, USGS Water, and NOAA CO-OPS now have focused activation/locality, normalization, freshness, proxy, and failure-isolation coverage; continue with remaining authoritative adapters |
 | Add the next validated authoritative source | New integrations should fill a defined product gap without weakening attribution or reliability | Prefer candidates from the researched backlog with no key and clear licensing |
@@ -100,7 +101,7 @@ The web application supports explicitly enabled Cloudflare background watches an
 | Source | Coverage | Data | Why It Matters | Key | Status |
 |--------|----------|------|----------------|-----|--------|
 | NASA FIRMS | Global | VIIRS 375m satellite fire hotspots | Global wildfire visibility beyond US-only NIFC | Free key needed | Pending |
-| EPA AirNow / OpenAQ | U.S. / Global | Air quality AQI by ZIP/latlon, multi-pollutant | More granular than Open-Meteo for US; OpenAQ adds 200+ countries | Free key / No key | Pending |
+| EPA AirNow / OpenAQ | U.S. / Global | Air quality AQI by ZIP/latlon, multi-pollutant | More granular than Open-Meteo for US; OpenAQ adds 200+ countries | Free key required for each candidate | Pending |
 | EMSC | Europe-Mediterranean + global | Earthquake data, felt reports, community-sourced | Complements USGS with European focus and felt intensity reports | No | ✅ Done |
 | Smithsonian GVP | Global | Holocene volcano locations, geology, and eruption history | Authoritative geographic baseline alongside active GDACS, GeoNet, and USGS alerts | No | ✅ Active as baseline context |
 | ReliefWeb | Global | Curated humanitarian disaster reports, situation reports | Adds humanitarian context to natural hazard data | Pre-approved appname | Blocked: anonymous v2 requests return 403 until an appname is approved |

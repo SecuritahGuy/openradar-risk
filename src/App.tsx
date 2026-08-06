@@ -209,6 +209,7 @@ export default function App() {
   const [severityFilters, setSeverityFilters] = useState(readInitialSeverityFilters);
   const [selectedEvent, setSelectedEvent] = useState<RiskEvent | null>(null);
   const [showExposureOnMap, setShowExposureOnMap] = useState(false);
+  const [showHistoricalMapContext, setShowHistoricalMapContext] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
 
@@ -459,7 +460,7 @@ export default function App() {
     [allEvents]
   );
 
-  const filteredEvents = useMemo(() => {
+  const filteredAllEvents = useMemo(() => {
     const visible = filterEvents(incidentEvents, sourceFilters, severityFilters);
     if (!currentImpactOnly) return visible;
     return visible.filter((event) => isCurrentImpact(event, result, radius));
@@ -469,8 +470,8 @@ export default function App() {
     [incidentEvents]
   );
   const filteredConcernEvents = useMemo(
-    () => activeConcernEvents(filteredEvents),
-    [filteredEvents]
+    () => activeConcernEvents(filteredAllEvents),
+    [filteredAllEvents]
   );
 
   useEffect(() => {
@@ -710,8 +711,8 @@ export default function App() {
           <MapView
             location={result}
             radius={radius}
-            events={filteredEvents}
-            baselineSignals={baselineSignals}
+            events={showHistoricalMapContext ? filteredAllEvents : filteredConcernEvents}
+            baselineSignals={showHistoricalMapContext ? baselineSignals : []}
             exposureSignals={showExposureOnMap ? exposure.data?.facilities ?? [] : []}
             weatherOverlay={weatherOverlay}
             showWeatherOverlay={showWeatherOverlay}
@@ -735,7 +736,7 @@ export default function App() {
         </Suspense>
         <FeedExplorer
           events={filteredConcernEvents}
-          allEvents={filteredEvents}
+          allEvents={filteredAllEvents}
           totalEvents={allConcernEvents.length}
           totalAllEvents={incidentEvents.length}
           location={result}
@@ -772,8 +773,13 @@ export default function App() {
         sourceHealth={sourceHealth}
         weatherOverlay={weatherOverlay}
         showWeatherOverlay={showWeatherOverlay}
+        showHistoricalMapContext={showHistoricalMapContext}
+        historicalMapContextAvailable={
+          filteredAllEvents.length > filteredConcernEvents.length || baselineSignals.length > 0
+        }
         weatherLayerMode={weatherLayerMode}
         onToggleWeatherOverlay={setShowWeatherOverlay}
+        onToggleHistoricalMapContext={setShowHistoricalMapContext}
         onWeatherLayerModeChange={setWeatherLayerMode}
         weatherOverlayLoading={weatherOverlayLoading}
         weatherOverlayError={weatherOverlayError}

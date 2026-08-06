@@ -10,8 +10,11 @@ interface MapLayerControlsProps {
   onRadiusChange: (radius: RadiusOption) => void;
   weatherOverlay: NwsWeatherOverlay | null;
   showWeatherOverlay: boolean;
+  showHistoricalMapContext: boolean;
+  historicalMapContextAvailable: boolean;
   weatherLayerMode: WeatherLayerMode;
   onToggleWeatherOverlay: (show: boolean) => void;
+  onToggleHistoricalMapContext: (show: boolean) => void;
   onWeatherLayerModeChange: (mode: WeatherLayerMode) => void;
   weatherOverlayLoading: boolean;
   weatherOverlayError: string | null;
@@ -22,8 +25,11 @@ export function MapLayerControls({
   onRadiusChange,
   weatherOverlay,
   showWeatherOverlay,
+  showHistoricalMapContext,
+  historicalMapContextAvailable,
   weatherLayerMode,
   onToggleWeatherOverlay,
+  onToggleHistoricalMapContext,
   onWeatherLayerModeChange,
   weatherOverlayLoading,
   weatherOverlayError,
@@ -61,6 +67,21 @@ export function MapLayerControls({
             NWS weather grid, zones, and stations
           </span>
         </label>
+        <label style={{ ...styles.toggleRow, marginTop: 9 }}>
+          <input
+            type="checkbox"
+            checked={showHistoricalMapContext}
+            disabled={!historicalMapContextAvailable}
+            onChange={(event) => onToggleHistoricalMapContext(event.target.checked)}
+            style={styles.checkbox}
+          />
+          <span>Historical and older incident context</span>
+        </label>
+        <div style={styles.detail}>
+          {historicalMapContextAvailable
+            ? "Off by default. Historical markers never affect current risk posture."
+            : "No historical map context is available for this location."}
+        </div>
         {showWeatherOverlay && (
           <div style={styles.detail}>
             {weatherOverlayLoading

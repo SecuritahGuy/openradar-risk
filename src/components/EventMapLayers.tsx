@@ -17,7 +17,13 @@ import {
   topClusterSeverity,
   type EventCluster,
 } from "../lib/eventClustering";
-import { severityColor, severityRank, sourceColor } from "../lib/riskInsights";
+import {
+  concernContextLabel,
+  isStaleConcernEvent,
+  severityColor,
+  severityRank,
+  sourceColor,
+} from "../lib/riskInsights";
 import { assessImpact } from "../lib/impactInsights";
 import { ClusterPopup, EventPopup } from "./map/EventPopup";
 
@@ -56,9 +62,9 @@ function formatTime(iso: string): string {
   });
 }
 
-function clusterIcon(cluster: EventCluster): L.DivIcon {
+function clusterIcon(cluster: EventCluster, historical: boolean): L.DivIcon {
   const severity = topClusterSeverity(cluster.events);
-  const color = severityColor(severity);
+  const color = historical ? "#78909c" : severityColor(severity);
   const size = Math.max(34, Math.min(58, 28 + cluster.events.length * 2));
 
   return L.divIcon({
@@ -67,9 +73,10 @@ function clusterIcon(cluster: EventCluster): L.DivIcon {
       width:${size}px;
       height:${size}px;
       border-radius:50%;
-      border:2px solid ${color};
-      background:${color};
-      color:#fff;
+      border:2px ${historical ? "dashed" : "solid"} ${color};
+      background:${historical ? "#eceff1" : color};
+      opacity:${historical ? "0.72" : "1"};
+      color:${historical ? "#455a64" : "#fff"};
       display:flex;
       align-items:center;
       justify-content:center;
@@ -138,16 +145,20 @@ export function EventMapLayers({
     [events]
   );
   const pointLayers = useMemo(
-    () =>
-      clusterPointEvents(
-        events.filter(
-          (event) =>
-            event.geometryType === "Point" &&
-            event.latitude != null &&
-            event.longitude != null
-        ),
-        zoom
-      ),
+    () => {
+      const pointEvents = events.filter(
+        (event) =>
+          event.geometryType === "Point" &&
+          event.latitude != null &&
+          event.longitude != null
+      );
+      const current = pointEvents.filter((event) => !isStaleConcernEvent(event));
+      const historical = pointEvents.filter((event) => isStaleConcernEvent(event));
+      return [
+        ...clusterPointEvents(current, zoom).map((item) => ({ item, historical: false })),
+        ...clusterPointEvents(historical, zoom).map((item) => ({ item, historical: true })),
+      ];
+    },
     [events, zoom]
   );
 
@@ -155,9 +166,11 @@ export function EventMapLayers({
     <>
       {polygonEvents.map((event) => {
         const impact = assessImpact(event, location, radius);
-        const dimmed =
+        const historical = isStaleConcernEvent(event);
+        const dimmed = historical || (
           !currentImpactOnly &&
-          (impact.level === "monitor" || impact.level === "historical");
+          (impact.level === "monitor" || impact.level === "historical")
+        );
         const color = sourceColor(event.source);
         const coords = event.polygon!.map(
           ([lng, lat]) => [lat, lng] as [number, number]
@@ -173,8 +186,9 @@ export function EventMapLayers({
               fillOpacity: dimmed ? 0.035 : impact.level === "affects" ? 0.18 : 0.1,
               opacity: dimmed ? 0.45 : 1,
               weight: impact.level === "affects" ? 3 : 2,
+              dashArray: historical ? "5 4" : undefined,
             }}
-            eventHandlers={accessiblePath(`${event.headline}, ${event.severity} ${event.category}`)}
+            eventHandlers={accessiblePath(`${concernContextLabel(event) ? `${concernContextLabel(event)}, ` : ""}${event.headline}, ${event.severity} ${event.category}`)}
           >
             <Popup>
               <EventPopup
@@ -188,7 +202,7 @@ export function EventMapLayers({
         );
       })}
 
-      {pointLayers.map((item) => {
+      {pointLayers.map(({ item, historical }) => {
         if (isEventCluster(item)) {
           const topEvents = [...item.events]
             .sort((a, b) => severityRank(b.severity) - severityRank(a.severity))
@@ -196,10 +210,10 @@ export function EventMapLayers({
 
           return (
             <Marker
-              key={`cluster-${item.id}`}
+              key={`cluster-${historical ? "history" : "active"}-${item.id}`}
               position={[item.latitude, item.longitude]}
-              icon={clusterIcon(item)}
-              alt={`${item.events.length} risk signals at this map location`}
+              icon={clusterIcon(item, historical)}
+              alt={`${item.events.length} ${historical ? "historical " : ""}risk signals at this map location`}
             >
               <Popup>
                 <ClusterPopup events={topEvents} onEventClick={onEventClick} />
@@ -210,9 +224,10 @@ export function EventMapLayers({
 
         const event = item;
         const impact = assessImpact(event, location, radius);
-        const dimmed =
+        const dimmed = historical || (
           !currentImpactOnly &&
-          (impact.level === "monitor" || impact.level === "historical");
+          (impact.level === "monitor" || impact.level === "historical")
+        );
         const color = sourceColor(event.source);
 
         if (event.category === "Transportation") {
@@ -221,7 +236,7 @@ export function EventMapLayers({
               key={event.id}
               position={[event.latitude!, event.longitude!]}
               icon={constructionEventIcon(dimmed)}
-              alt={`${event.headline}, ${event.severity} transportation event`}
+              alt={`${historical ? "Historical, " : ""}${event.headline}, ${event.severity} transportation event`}
             >
               <Tooltip direction="top" offset={[0, -28]}>
                 {event.headline}
@@ -249,8 +264,9 @@ export function EventMapLayers({
               fillOpacity: dimmed ? 0.2 : 0.58,
               opacity: dimmed ? 0.5 : 1,
               weight: impact.level === "nearby" ? 3 : 2,
+              dashArray: historical ? "4 3" : undefined,
             }}
-            eventHandlers={accessiblePath(`${event.headline}, ${event.severity} ${event.category}`)}
+            eventHandlers={accessiblePath(`${historical ? "Historical or older, " : ""}${event.headline}, ${event.severity} ${event.category}`)}
           >
             <Tooltip direction="top" offset={[0, -10]}>
               {event.headline}
